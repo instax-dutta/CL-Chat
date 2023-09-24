@@ -50,24 +50,36 @@ def handle(client):
 # Receiving / Listening Function
 def receive():
     while True:
-        # Accept Connection
-        client, address = server.accept()
-        print("Connected with {}".format(str(address)))
+        try:
+            # Accept Connection
+            client, address = server.accept()
+            print("Connected with {}".format(str(address)))
 
-        # Request And Store Nickname
-        client.send('NICK'.encode('ascii'))
-        nickname = client.recv(1024).decode('ascii')
-        nicknames.append(nickname)
-        clients.append(client)
+            # Request And Store Nickname
+            client.send('NICK'.encode('ascii'))
+            nickname = client.recv(1024).decode('ascii')
+            nicknames.append(nickname)
+            clients.append(client)
 
-        # Print And Broadcast Nickname
-        print("Nickname is {}".format(nickname))
-        broadcast("{} joined!".format(nickname).encode('ascii'))
-        client.send('Connected to server!'.encode('ascii'))
+            # Print And Broadcast Nickname
+            print("Nickname is {}".format(nickname))
+            broadcast("{} joined!".format(nickname).encode('ascii'))
+            client.send('Connected to server!'.encode('ascii'))
 
-        # Start Handling Thread For Client
-        thread = threading.Thread(target=handle, args=(client,))
-        thread.start()
+            # Start Handling Thread For Client
+            thread = threading.Thread(target=handle, args=(client,))
+            thread.start()
+
+        except OSError as e:
+            print(f"Error accepting connection: {e}")
+            continue
+        except ConnectionResetError:
+            print("Client disconnected unexpectedly.")
+            continue
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            continue
+
 
 print("Server is listening on {}:{}".format(host, port))
 receive()
