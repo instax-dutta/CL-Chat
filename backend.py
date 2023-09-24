@@ -1,14 +1,9 @@
 import socket
 import threading
-import json
-from datetime import datetime
 
 # Connection Data
-host = '13.200.44.164'  # Replace with your Lightsail instance's public IP or DNS name
-port = 7325
-
-# Create a log file
-log_file = "chatroom_logs.json"
+host = '172.26.1.99'
+port = 8080
 
 # Starting Server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,34 +17,35 @@ nicknames = []
 # Sending Messages To All Connected Clients
 def broadcast(message):
     for client in clients:
-        client.send(message)
+        try:
+            client.send(message)
+        except:
+            # Remove and close the client if there's an error
+            remove_client(client)
+
+# Remove and Close Client
+def remove_client(client):
+    if client in clients:
+        index = clients.index(client)
+        client.close()
+        nickname = nicknames[index]
+        broadcast('{} left!'.format(nickname).encode('ascii'))
+        nicknames.remove(nickname)
+        clients.remove(client)
 
 # Handling Messages From Clients
-def handle(client, nickname):
+def handle(client):
     while True:
         try:
             # Broadcasting Messages
             message = client.recv(1024)
+            if not message:
+                break
             broadcast(message)
 
-            # Log the message
-            log_data = {
-                "timestamp": str(datetime.now()),
-                "nickname": nickname,
-                "message": message.decode("ascii").strip()
-            }
-            with open(log_file, "a") as log_file:
-                json.dump(log_data, log_file)
-                log_file.write("\n")
-
         except:
-            # Removing And Closing Clients
-            index = clients.index(client)
-            clients.remove(client)
-            client.close()
-            nicknames.pop(index)
-            broadcast('{} left!'.format(nickname).encode('ascii'))
-            break
+            # Remove and close the client if there's an error
+            remove_client(client)
 
 # Receiving / Listening Function
 def receive():
@@ -70,7 +66,7 @@ def receive():
         client.send('Connected to server!'.encode('ascii'))
 
         # Start Handling Thread For Client
-        thread = threading.Thread(target=handle, args=(client, nickname))
+        thread = threading.Thread(target=handle, args=(client,))
         thread.start()
 
 print("Server is listening on {}:{}".format(host, port))
