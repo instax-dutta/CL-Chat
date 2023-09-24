@@ -2,8 +2,8 @@ import socket
 import threading
 
 # Connection Data
-host = '172.26.1.99'
-port = 8080
+host = '13.200.44.164'
+port = 7325
 
 # Starting Server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,11 +27,11 @@ def broadcast(message):
 def remove_client(client):
     if client in clients:
         index = clients.index(client)
-        client.close()
         nickname = nicknames[index]
-        broadcast('{} left!'.format(nickname).encode('ascii'))
-        nicknames.remove(nickname)
         clients.remove(client)
+        nicknames.remove(nickname)
+        client.close()
+        broadcast('{} left!'.format(nickname).encode('ascii'))
 
 # Handling Messages From Clients
 def handle(client):
@@ -71,3 +71,4 @@ def receive():
 
 print("Server is listening on {}:{}".format(host, port))
 receive()
+
