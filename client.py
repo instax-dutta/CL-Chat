@@ -2,12 +2,22 @@ import socket
 import threading
 
 # Connection Data
-host = 'localhost'
-port = 32000
-
+host = 'chat.bunk.pro'
+port = 8080
+print(r""" #$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#
+   ____ _           ____ _   _    _  _____ 
+  / ___| |         / ___| | | |  / \|_   _|
+ | |   | |   _____| |   | |_| | / _ \ | |  
+ | |___| |__|_____| |___|  _  |/ ___ \| |  
+  \____|_____|     \____|_| |_/_/   \_\_|  
+            By Abhishek Dash
+#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#$#                                     
+     """)
 # Connecting To Server
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((host, port))
+
+
 
 # Prompting The Client For A Nickname
 nickname = input("Choose your nickname: ")
