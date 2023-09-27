@@ -56,14 +56,12 @@ Contributions are always welcome! If you have any ideas, suggestions, or bug rep
 
 ## License
 
-This project is licensed under the [MIT License](https://github.com/your-username/CL-Chat/blob/main/LICENSE).
+This project is licensed under the [MIT License](https://github.com/instax-dutta/CL-Chat/blob/main/LICENSE).
 
 ## Contact
 
 For any questions or inquiries, please contact the project maintainer:
 
-Your Name - [email@example.com](mailto:email@example.com)
+Your Name - [email@example.com](mailto:bffsproductionhouse456@gmail.com)
 
-Project Link: [https://github.com/your-username/CL-Chat](https://github.com/your-username/CL-Chat)
-
-Written by Chatsonic
+Project Link: [https://github.com/your-username/CL-Chat](https://github.com/instax-dutta/CL-Chat)
