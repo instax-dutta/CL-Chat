@@ -4,11 +4,11 @@ import time
 from pymongo import MongoClient  # Import MongoClient from pymongo
 
 # Connection Data
-host = 'chat.bunk.pro'
-port = 8080
+host = 'your-server-ip'
+port = #your server port
 
 # MongoDB Connection URI
-mongo_uri = "mongodb+srv://racerop:racerop54@chatroomwing1.gew3zr8.mongodb.net/?retryWrites=true&w=majority"
+mongo_uri = "" #your mongodb uri
 client = MongoClient(mongo_uri)
 db = client["cl-chat"]  # Replace "chat_log_db" with your desired database name
 chat_log_collection = db["chat_log"]  # Replace "chat_log" with your desired collection name
