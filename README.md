@@ -38,9 +38,9 @@ CL-Chat is a simple command line based chatroom application written in Python. I
    python client.py
    ```
 
-3. Enter your username and choose a chat room.
+3. Enter your nickname and join the universal chatroom and have fun.
 
-4. Begin chatting with other users in the selected chat room.
+4. Enjoy being connected with your team or freinds in real time.
 
 ## How It Works
 
