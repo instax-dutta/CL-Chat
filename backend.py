@@ -1,9 +1,17 @@
 import socket
 import threading
+import time
+from pymongo import MongoClient  # Import MongoClient from pymongo
 
 # Connection Data
-host = '172.26.1.99'
+host = '172.26.15.151'
 port = 8080
+
+# MongoDB Connection URI
+mongo_uri = "mongodb+srv://racerop:racerop54@chatroomwing1.gew3zr8.mongodb.net/?retryWrites=true&w=majority"
+client = MongoClient(mongo_uri)
+db = client["cl-chat"]  # Replace "chat_log_db" with your desired database name
+chat_log_collection = db["chat_log"]  # Replace "chat_log" with your desired collection name
 
 # Starting Server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,10 +23,13 @@ clients = []
 nicknames = []
 
 # Sending Messages To All Connected Clients
-def broadcast(message):
+def broadcast(message, sender):
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    log_entry = f"{timestamp} {sender}: {message}"
+    chat_log_collection.insert_one({"timestamp": timestamp, "sender": sender, "message": message})
     for client in clients:
         try:
-            client.send(message)
+            client.send(log_entry.encode('ascii'))
         except:
             # Remove and close the client if there's an error
             remove_client(client)
@@ -31,17 +42,20 @@ def remove_client(client):
         clients.remove(client)
         nicknames.remove(nickname)
         client.close()
-        broadcast('{} left!'.format(nickname).encode('ascii'))
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"{timestamp} {nickname} left the chat."
+        chat_log_collection.insert_one({"timestamp": timestamp, "sender": "Server", "message": f"{nickname} left the chat."})
+        broadcast('{} left!'.format(nickname), "Server")
 
 # Handling Messages From Clients
-def handle(client):
+def handle(client, nickname):
     while True:
         try:
             # Broadcasting Messages
-            message = client.recv(1024)
+            message = client.recv(1024).decode('ascii')
             if not message:
                 break
-            broadcast(message)
+            broadcast(message, nickname)
 
         except:
             # Remove and close the client if there's an error
@@ -50,37 +64,27 @@ def handle(client):
 # Receiving / Listening Function
 def receive():
     while True:
-        try:
-            # Accept Connection
-            client, address = server.accept()
-            print("Connected with {}".format(str(address)))
+        # Accept Connection
+        client, address = server.accept()
+        print("Connected with {}".format(str(address)))
 
-            # Request And Store Nickname
-            client.send('NICK'.encode('ascii'))
-            nickname = client.recv(1024).decode('ascii')
-            nicknames.append(nickname)
-            clients.append(client)
+        # Request And Store Nickname
+        client.send('NICK'.encode('ascii'))
+        nickname = client.recv(1024).decode('ascii')
+        nicknames.append(nickname)
+        clients.append(client)
 
-            # Print And Broadcast Nickname
-            print("Nickname is {}".format(nickname))
-            broadcast("{} joined!".format(nickname).encode('ascii'))
-            client.send('Connected to server!'.encode('ascii'))
+        # Print And Broadcast Nickname
+        print("Nickname is {}".format(nickname))
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"{timestamp} {nickname} joined the chat."
+        chat_log_collection.insert_one({"timestamp": timestamp, "sender": "Server", "message": f"{nickname} joined the chat."})
+        broadcast("{} joined!".format(nickname), "Server")
+        client.send('Connected to server!'.encode('ascii'))
 
-            # Start Handling Thread For Client
-            thread = threading.Thread(target=handle, args=(client,))
-            thread.start()
-
-        except OSError as e:
-            print(f"Error accepting connection: {e}")
-            continue
-        except ConnectionResetError:
-            print("Client disconnected unexpectedly.")
-            continue
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            continue
-
+        # Start Handling Thread For Client
+        thread = threading.Thread(target=handle, args=(client, nickname))
+        thread.start()
 
 print("Server is listening on {}:{}".format(host, port))
 receive()
-
