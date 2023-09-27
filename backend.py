@@ -4,7 +4,7 @@ import time
 from pymongo import MongoClient  # Import MongoClient from pymongo
 
 # Connection Data
-host = '172.26.15.151'
+host = 'chat.bunk.pro'
 port = 8080
 
 # MongoDB Connection URI
