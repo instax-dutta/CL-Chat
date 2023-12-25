@@ -62,6 +62,7 @@ This project is licensed under the [MIT License](https://github.com/instax-dutta
 
 For any questions or inquiries, please contact the project maintainer:
 
-Your Name - [email@example.com](mailto:bffsproductionhouse456@gmail.com)
+Sai Dutta Abhishek Dash - [bffsproductionhouse456@gmail.com](mailto:bffsproductionhouse456@gmail.com)
 
-Project Link: [https://github.com/your-username/CL-Chat](https://github.com/instax-dutta/CL-Chat)
+Project Link: [https://github.com/instax-dutta/CL-Chat](https://github.com/instax-dutta/CL-Chat)
+
